@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script src="https://jm-static.jd.com/lib/jmsdk-pc/jmsdkPC.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            background: #0f0c29;
+            background: linear-gradient(to right, #24243e, #302b63, #0f0c29);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 添加动态光效背景 */
+        .background-effects {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .light-beam {
+            position: absolute;
+            width: 200vw;
+            height: 200vh;
+            background: linear-gradient(45deg, 
+                rgba(0, 191, 255, 0.1) 0%,
+                rgba(0, 191, 255, 0) 50%,
+                rgba(0, 191, 255, 0.1) 100%
+            );
+            animation: rotateLightBeam 20s linear infinite;
+            transform-origin: 50% 50%;
+        }
+
+        .grid {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background-image: 
+                linear-gradient(rgba(0, 191, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 191, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: moveGrid 20s linear infinite;
+            transform: perspective(500px) rotateX(45deg);
+        }
+
+        .cyber-circles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .cyber-circle {
+            position: absolute;
+            border: 2px solid rgba(0, 191, 255, 0.1);
+            border-radius: 50%;
+            animation: pulseCircle 4s ease-out infinite;
+        }
+
+        @keyframes rotateLightBeam {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes moveGrid {
+            from { transform: perspective(500px) rotateX(45deg) translateY(0); }
+            to { transform: perspective(500px) rotateX(45deg) translateY(-50%); }
+        }
+
+        @keyframes pulseCircle {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(3);
+                opacity: 0;
+            }
+        }
+
+        /* 更新容器样式 */
+        .container {
+            background: rgba(16, 16, 28, 0.2) !important;
+            backdrop-filter: blur(3px) !important;
+            border: 1px solid rgba(0, 191, 255, 0.2) !important;
+            box-shadow: none !important;
+        }
+
+        /* 添加按钮发光效果 */
+        button {
+            background: linear-gradient(45deg, 
+                rgba(65, 105, 225, 0.4), 
+                rgba(0, 191, 255, 0.4)
+            ) !important;
+            border: 1px solid rgba(0, 191, 255, 0.3) !important;
+            backdrop-filter: blur(3px) !important;
+        }
+
+        button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            transform: rotate(45deg);
+            animation: buttonGlow 2s linear infinite;
+        }
+
+        @keyframes buttonGlow {
+            0% { transform: rotate(45deg) translateX(-100%); }
+            100% { transform: rotate(45deg) translateX(100%); }
+        }
+
+        h2 {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.9) !important;
+            text-shadow: 0 0 5px rgba(0, 191, 255, 0.3) !important;
+            margin-bottom: 30px;
+            font-size: 28px;
+            letter-spacing: 2px;
+            position: relative;
+            animation: titleGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes titleGlow {
+            0%, 100% {
+                color: #fff;
+                text-shadow: 
+                    0 0 10px rgba(255, 51, 102, 0.5),
+                    0 0 20px rgba(255, 51, 102, 0.3),
+                    0 0 30px rgba(255, 51, 102, 0.1);
+            }
+            50% {
+                color: #ff3366;
+                text-shadow: 
+                    0 0 20px rgba(255, 51, 102, 0.8),
+                    0 0 30px rgba(255, 51, 102, 0.5),
+                    0 0 40px rgba(255, 51, 102, 0.3);
+            }
+        }
+
+        h2::before {
+            content: "咚咚智能唤醒系统";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+            animation: titleStroke 3s ease-in-out infinite;
+        }
+
+        @keyframes titleStroke {
+            0%, 100% {
+                opacity: 0.5;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(1.02);
+            }
+        }
+
+        .input-group {
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.9) !important;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            background: rgba(16, 16, 28, 0.3) !important;
+            border: 1px solid rgba(0, 191, 255, 0.2) !important;
+            backdrop-filter: blur(3px) !important;
+            color: #fff !important;
+            border-radius: 8px;
+            outline: none;
+            box-sizing: border-box;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, textarea:focus {
+            border-color: #ff3366;
+            box-shadow: 0 0 15px rgba(255, 51, 102, 0.3);
+        }
+
+        textarea {
+            height: 150px;
+            resize: vertical;
+            line-height: 1.5;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        button {
+            padding: 12px 25px;
+            background: linear-gradient(45deg, 
+                rgba(65, 105, 225, 0.4), 
+                rgba(0, 191, 255, 0.4)
+            );
+            border: none;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 14px;
+            position: relative;
+            overflow: hidden;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            background: linear-gradient(45deg, 
+                rgba(0, 191, 255, 0.5), 
+                rgba(65, 105, 225, 0.5)
+            );
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(0, 191, 255, 0.2);
+        }
+
+        button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            transform: rotate(45deg);
+            transition: 0.5s;
+        }
+
+        button:hover::after {
+            left: 100%;
+        }
+
+        #logArea {
+            background: rgba(16, 16, 28, 0.3) !important;
+            backdrop-filter: blur(3px) !important;
+            padding: 15px;
+            border-radius: 8px;
+            height: 200px;
+            overflow-y: auto;
+            border: 1px solid rgba(0, 191, 255, 0.2) !important;
+            margin-top: 20px;
+        }
+
+        .log-entry {
+            margin: 8px 0;
+            padding: 8px;
+            border-left: 2px solid rgba(0, 191, 255, 0.3) !important;
+            background: rgba(255, 255, 255, 0.1) !important;
+            border-radius: 4px;
+            color: #fff;
+        }
+
+        #pinCount {
+            position: absolute;
+            right: 10px;
+            top: 0;
+            font-size: 14px;
+            color: #ff3366;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, 
+                rgba(65, 105, 225, 0.4), 
+                rgba(0, 191, 255, 0.4)
+            ) !important;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #ff6b99, #ff3366);
+        }
+
+        .copyright {
+            text-align: center;
+            padding: 20px 0;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            margin-top: 20px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .copyright a {
+            color: #ff3366;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .copyright a:hover {
+            color: #ff6b99;
+            text-shadow: 0 0 10px rgba(255, 51, 102, 0.5);
+        }
+
+        /* 轮播背景样式 */
+        .slideshow-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+        }
+
+        .slideshow-container .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .slideshow-container .slide.active {
+            opacity: 1;
+        }
+
+        /* 添加渐变遮罩 */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: none !important;
+        }
+
+        /* 调整粒子层和容器样式 */
+        #particles-js {
+            background: transparent;
+            z-index: -1;
+        }
+
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .video-background video {
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+        }
+
+        /* 调整遮罩层透明度，让视频更清晰 */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(
+                45deg,
+                rgba(16, 16, 28, 0.5),
+                rgba(0, 191, 255, 0.2)
+            );
+            pointer-events: none;
+        }
+
+        /* 确保容器背景半透明 */
+        .container {
+            background: rgba(16, 16, 28, 0.4) !important;
+            backdrop-filter: blur(5px) !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-effects">
+        <div class="grid"></div>
+        <div class="light-beam"></div>
+        <div class="cyber-circles" id="cyberCircles"></div>
+    </div>
+    <div id="particles-js" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></div>
+    <div class="container">
+        <h2>咚咚智能唤醒系统</h2>
+        
+        <div class="input-group">
+            <label>商家账号：</label>
+            <input type="text" id="sellerPin" value="奥克斯卫浴-小露" />
+        </div>
+
+        <div class="input-group">
+            <label>留言ID列表：<span id="pinCount" style="color: #ff3366; margin-left: 10px;">0</span></label>
+            <textarea id="customerPins" placeholder="请输入留言ID列表，每行一个"></textarea>
+        </div>
+
+        <div class="button-group">
+            <button onclick="startProcess()">启动唤醒</button>
+            <button onclick="clearInput()">清空输入</button>
+            <button onclick="clearLog()">清空日志</button>
+        </div>
+
+        <div id="logArea"></div>
+
+        <div class="copyright">
+            © 2024 Designed by 杰 | QQ: <a href="tencent://message/?uin=879365639">879365639</a>
+        </div>
+    </div>
+
+    <!-- 添加遮罩层 -->
+    <div class="overlay"></div>
+
+    <!-- 使用视频短链 -->
+    <div class="video-background">
+        <video id="bgVideo" autoplay loop muted playsinline preload="auto">
+            <source src="https://cdn3.easylink.cc/psxfcc_a64daa31692bc11b9f4fa019327fc189.mp4?e=1735468005&token=J_WyMIdhZtwb0E0QHWRqEfQrd5lVSWLffl9QxaxP:WwGwqBfZWw6Tv5qs6wZapn-urJA=" type="video/mp4">
+        </video>
+    </div>
+
+    <!-- 可以添加一个提示让用户知道需要点击来开启声音 -->
+    <div class="audio-hint" style="position: fixed; bottom: 20px; left: 20px; color: white; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 5px; z-index: 1000;">
+        点击页面任意位置开启声音
+    </div>
+
+    <script>
+        function updateCount() {
+            const textarea = document.getElementById('customerPins');
+            const count = textarea.value.split('\n').filter(line => line.trim()).length;
+            document.getElementById('pinCount').textContent = count;
+        }
+
+        function removeDuplicates() {
+            let textarea = document.getElementById('customerPins');
+            let pins = textarea.value.split('\n')
+                .map(pin => pin.trim())
+                .filter(pin => pin !== '');
+            
+            // 去除重复项
+            let uniquePins = [...new Set(pins)];
+            textarea.value = uniquePins.join('\n');
+            
+            // 更新计数
+            updateCount();
+            
+            if (pins.length !== uniquePins.length) {
+                log(`已自动去除 ${pins.length - uniquePins.length} 个重复项`);
+            }
+        }
+
+        function log(message) {
+            const logArea = document.getElementById('logArea');
+            const time = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            
+            // 根据消息类型添加不同样式
+            if (message.includes('成功')) {
+                logEntry.style.borderLeft = '2px solid #00ff00';
+            } else if (message.includes('失败')) {
+                logEntry.style.borderLeft = '2px solid #ff3366';
+            }
+            
+            logEntry.innerHTML = `[${time}] ${message}`;
+            logArea.insertBefore(logEntry, logArea.firstChild);
+        }
+
+        // 优化唤醒功能
+        async function startProcess() {
+            const sellerPin = document.getElementById('sellerPin').value.trim();
+            const customerPins = document.getElementById('customerPins').value
+                .split('\n')
+                .map(pin => pin.trim())
+                .filter(pin => pin !== '');
+
+            if (!sellerPin) {
+                log('请输入商家账号');
+                return;
+            }
+
+            if (customerPins.length === 0) {
+                log('请输入留言ID');
+                return;
+            }
+
+            // 添加进度显示
+            log(`开始处理 ${customerPins.length} 条留言`);
+
+            // 使用 Promise.all 和延时处理，避免并发过高
+            const batchSize = 3; // 每批处理数量
+            for (let i = 0; i < customerPins.length; i += batchSize) {
+                const batch = customerPins.slice(i, i + batchSize);
+                
+                await Promise.all(batch.map(async (customerPin) => {
+                    try {
+                        await jmsdkPC.openDD({
+                            pin: sellerPin,
+                            client: customerPin,
+                            userType: 1,
+                            tokenType: "2"
+                        });
+                        log(`✅ 成功唤醒对话: ${customerPin}`);
+                    } catch (error) {
+                        log(`❌ 唤醒失败: ${customerPin} - ${error.message}`);
+                    }
+                }));
+
+                // 每批处理后添加小延时，避免请求过于密集
+                if (i + batchSize < customerPins.length) {
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                }
+            }
+
+            log('✨ 全部处理完成');
+        }
+
+        function clearInput() {
+            document.getElementById('customerPins').value = '';
+            log('已清空输入框');
+        }
+
+        function clearLog() {
+            document.getElementById('logArea').innerHTML = '';
+        }
+
+        // 监听商家账号变更
+        document.getElementById('sellerPin').addEventListener('change', function() {
+            log(`商家账号已更新为: ${this.value}`);
+        });
+
+        // 添加事件监听
+        document.addEventListener('DOMContentLoaded', function() {
+            const textarea = document.getElementById('customerPins');
+            textarea.addEventListener('input', updateCount);
+            textarea.addEventListener('change', removeDuplicates);
+            
+            // 初始化计数
+            updateCount();
+        });
+
+        // 简单的计数函数
+        function updateCount() {
+            const textarea = document.getElementById('customerPins');
+            const count = textarea.value.split('\n').filter(line => line.trim()).length;
+            document.getElementById('pinCount').textContent = count;
+        }
+
+        // 添加事件监听
+        window.onload = function() {
+            const textarea = document.getElementById('customerPins');
+            textarea.addEventListener('input', updateCount);
+            textarea.addEventListener('change', updateCount);
+            updateCount(); // 初始化计数
+        }
+
+        particlesJS('particles-js', {
+            particles: {
+                number: {
+                    value: 80,
+                    density: {
+                        enable: true,
+                        value_area: 800
+                    }
+                },
+                color: {
+                    value: ['#00ffff', '#4169E1', '#00bfff']
+                },
+                shape: {
+                    type: 'circle',
+                },
+                opacity: {
+                    value: 0.5,
+                    random: true,
+                    animation: {
+                        enable: true,
+                        speed: 1,
+                        minimumValue: 0.1,
+                        sync: false
+                    }
+                },
+                size: {
+                    value: 3,
+                    random: true,
+                    animation: {
+                        enable: true,
+                        speed: 2,
+                        minimumValue: 0.3,
+                        sync: false
+                    }
+                },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: '#00bfff',
+                    opacity: 0.4,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 2,
+                    direction: 'none',
+                    random: true,
+                    straight: false,
+                    out_mode: 'out',
+                    bounce: false,
+                    attract: {
+                        enable: true,
+                        rotateX: 600,
+                        rotateY: 1200
+                    }
+                }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: {
+                    onhover: {
+                        enable: true,
+                        mode: 'grab'
+                    },
+                    onclick: {
+                        enable: true,
+                        mode: 'push'
+                    },
+                    resize: true
+                },
+                modes: {
+                    grab: {
+                        distance: 140,
+                        line_linked: {
+                            opacity: 1
+                        }
+                    },
+                    push: {
+                        particles_nb: 4
+                    }
+                }
+            },
+            retina_detect: true
+        });
+
+        // 更新视频控制相关代码
+        document.addEventListener('DOMContentLoaded', function() {
+            const video = document.getElementById('bgVideo');
+            
+            // 初始设置
+            video.load();
+            video.muted = true; // 开始时保持静音以允许自动播放
+            
+            const enableAudio = () => {
+                video.muted = false;
+                video.volume = 0.3; // 设置适中的音量
+                // 移除事件监听器，避免重复触发
+                document.removeEventListener('click', enableAudio);
+                document.removeEventListener('touchstart', enableAudio);
+            };
+            
+            // 监听用户交互来启用声音
+            document.addEventListener('click', enableAudio);
+            document.addEventListener('touchstart', enableAudio);
+            
+            // 尝试播放
+            const playVideo = async () => {
+                try {
+                    await video.play();
+                    console.log('视频开始播放');
+                } catch (err) {
+                    console.log('播放失败:', err);
+                }
+            };
+            
+            playVideo();
+        });
+
+        function createCyberCircles() {
+            const container = document.getElementById('cyberCircles');
+            const colors = ['rgba(0, 191, 255, 0.1)', 'rgba(65, 105, 225, 0.1)'];
+            
+            setInterval(() => {
+                const circle = document.createElement('div');
+                circle.className = 'cyber-circle';
+                circle.style.left = Math.random() * 100 + '%';
+                circle.style.top = Math.random() * 100 + '%';
+                circle.style.width = Math.random() * 100 + 50 + 'px';
+                circle.style.height = circle.style.width;
+                circle.style.borderColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                container.appendChild(circle);
+                
+                setTimeout(() => {
+                    container.removeChild(circle);
+                }, 4000);
+            }, 1000);
+        }
+
+        window.addEventListener('load', createCyberCircles);
+    </script>
+</body>
+</html> 
